@@ -94,12 +94,54 @@ func (c *cpu) executeOp() {
 		c.stkp += 1
 		c.pc = c.opcode & 0x0FFF
 	case 0x3000: // only 3XNN, skips next instruction if V[x] == NN
-		if uint16(c.v[c.opcode&0xF000]>>8) == c.opcode&0x00FF {
-			c.pc = c.pc + 4 // 2 bytes for execution and and 2 for skipping next instruction
+		if uint16(c.v[c.opcode&0x0F00>>8]) == c.opcode&0x00FF {
+			c.pc += 4 // 2 bytes for execution and and 2 for skipping next instruction
 		} else {
-			c.pc = c.pc + 2
+			c.pc += 2
 		}
-	case 0x4000: // TODO
+	case 0x4000: // only 4XNN, skips next instruction if V[x] != NN
+		if uint16(c.v[c.opcode&0x0F00>>8]) != c.opcode&0x00FF {
+			c.pc += 4
+		} else {
+			c.pc += 2
+		}
+	case 0x5000: // only 5XY0
+		if c.v[c.opcode&0x0F00>>8] == c.v[c.opcode&0x00F0>>4] {
+			c.pc += 4
+		} else {
+			c.pc += 2
+		}
+	case 0x6000: // only 6XNN, Sets V[x] to NN
+		c.v[c.opcode&0x0F00>>8] = uint8(c.opcode & 0x00FF)
+		c.pc += 2
+	case 0x7000: // only 7XNN, adds NN to V[x] without changing carry flag
+		c.v[c.opcode&0x0F00>>8] += uint8(c.opcode & 0x00FF)
+		c.pc += 2
+	case 0x8000: // 8XY0/1/2/3/4/5/6/E
+		switch c.opcode & 0x000F {
+		case 0x0000: // 8XY0, sets V[x] to value of V[y]
+			c.v[c.opcode&0x0F00>>8] = c.v[c.opcode&0x00F0>>4]
+			c.pc += 2
+		case 0x0001: // 8XY1, sets V[x] to V[x]|V[y]
+			c.v[c.opcode&0x0F00>>8] |= c.v[c.opcode&0x00F0>>4]
+			c.pc += 2
+		case 0x0002: // 8XY2, sets V[X] to V[x]&V[y]
+			c.v[c.opcode&0x0F00>>8] &= c.v[c.opcode&0x00F0>>4]
+			c.pc += 2
+		case 0x0003: // 8XY3, sets V[x] to V[x]^V[y]
+			c.v[c.opcode&0x0F00>>8] ^= c.v[c.opcode&0x00F0>>4]
+			c.pc += 2
+		case 0x0004: // 8XY4, sets V[x] to V[x]+V[y] with overflow flag V[0xF] if required
+			if c.v[c.opcode&0x0F00>>8] > 0xFF-c.v[c.opcode&0x00F0>>4] {
+				c.v[0xF] = 1
+			} else {
+				c.v[0xF] = 0
+			}
+			c.v[c.opcode&0x0F00>>8] += c.v[c.opcode&0x00F0>>4]
+			c.pc += 2
+		case 0x0005:
+			// TODO
+		}
 
 	default:
 		fmt.Println("Invalid opcode ", c.opcode)
