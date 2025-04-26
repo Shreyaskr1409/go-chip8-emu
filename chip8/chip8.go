@@ -131,7 +131,7 @@ func (c *cpu) executeOp() {
 		case 0x0003: // 8XY3, sets V[x] to V[x]^V[y]
 			c.v[c.opcode&0x0F00>>8] ^= c.v[c.opcode&0x00F0>>4]
 			c.pc += 2
-		case 0x0004: // 8XY4, sets V[x] to V[x]+V[y] with overflow flag V[0xF] if required
+		case 0x0004: // 8XY4, sets V[x] to V[x]+V[y] with overflow flag V[0xF] set if required
 			if c.v[c.opcode&0x0F00>>8] > 0xFF-c.v[c.opcode&0x00F0>>4] {
 				c.v[0xF] = 1
 			} else {
@@ -139,8 +139,19 @@ func (c *cpu) executeOp() {
 			}
 			c.v[c.opcode&0x0F00>>8] += c.v[c.opcode&0x00F0>>4]
 			c.pc += 2
-		case 0x0005:
-			// TODO
+		case 0x0005: // 8XY5, sets V[x] to V[x]+V[y] with underflow flag V[0xF] unset if required
+			if c.v[c.opcode&0x00F0>>4] > c.v[c.opcode&0x0F00>>8] {
+				c.v[0xF] = 0
+			} else {
+				c.v[0xF] = 1
+			}
+			c.v[c.opcode&0x0F00>>8] = c.v[c.opcode&0x0F00>>8] - c.v[c.opcode&0x00F0>>4]
+			c.pc += 2
+		case 0x0006: // 8XY6, sets V[0xF] to l.s.b. of X and shifts X to right by 1
+			c.v[0xF] = c.v[c.opcode&0x0F00>>8] & 0x1
+			c.v[c.opcode&0x0F00>>8] = c.v[c.opcode&0x0F00>>8] >> 1
+			c.pc += 2
+		case 0x0007:
 		}
 
 	default:
