@@ -53,6 +53,15 @@ func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth, screenH
 }
 
 func main() {
+	// i think this should remove old log file if it exists
+	if _, err := os.Stat("app.log"); err == nil {
+		err := os.Remove("app.log")
+		if err != nil {
+			log.Fatal("Failed to delete old log file:", err)
+		}
+	}
+
+	// new log file
 	file, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
 	if err != nil {
 		log.Fatal("Failed to open log file:", err)
@@ -68,6 +77,8 @@ func main() {
 
 	ebiten.SetWindowSize(int(DEFAULT_WIDTH)*DEFAULT_SCALE, int(DEFAULT_HEIGHT)*DEFAULT_SCALE)
 	ebiten.SetWindowTitle("CHIP-8 EMULATOR - " + filename)
+	// 60, 120 were too slow
+	ebiten.SetTPS(240)
 
 	game, err := NewGame(filename)
 	if err != nil {

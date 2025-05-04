@@ -105,10 +105,10 @@ func (c *Cpu) executeOp() {
 			} else {
 				c.v[0xF] = 1
 			}
-			c.v[c.opcode&0x0F00] = c.v[c.opcode&0x00F0] - c.v[c.opcode&0x0F00]
+			c.v[c.opcode&0x0F00>>8] = c.v[c.opcode&0x00F0>>4] - c.v[c.opcode&0x0F00>>8]
 			c.pc += 2
 		case 0x000E: // 8XYE, shifts V[x] <<= 1 then V[0xF] is 1 if MSB earlier was 1 else 0
-			c.v[0xF] = c.v[c.opcode&0xF000>>8] >> 7
+			c.v[0xF] = c.v[c.opcode&0x0F00>>8] >> 7
 			c.v[c.opcode&0x0F00>>8] = c.v[c.opcode&0x0F00>>8] << 1
 			c.pc += 2
 		default:
