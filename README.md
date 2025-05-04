@@ -21,7 +21,10 @@ Features:
   original as possible
 - Should be able to run any Chip-8 game compatible with other well known implem-
   entations
+```
+![Rock-Paper-Scissors-ROM](https://github.com/user-attachments/assets/2a1c8a6d-c787-4ad4-84ff-9e6cac469cab)
 
+```
 Requirements:
 -------------
 * Needs to be run through a terminal, since other UI elements are not added yet
