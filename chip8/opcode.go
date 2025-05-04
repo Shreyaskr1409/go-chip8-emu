@@ -6,7 +6,7 @@ import (
 )
 
 // No need to call directly from main loop, this will be called from emulateCycle()
-func (c *cpu) executeOp() {
+func (c *Cpu) executeOp() {
 	// TODO
 	switch c.opcode & 0xF000 {
 	case 0x0000:

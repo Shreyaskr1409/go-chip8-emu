@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-type cpu struct {
+type Cpu struct {
 	opcode uint16
 	memory [4098]uint8
 	v      [16]uint8
@@ -42,8 +42,8 @@ var fontset = []uint8{
 	0xF0, 0x80, 0xF0, 0x80, 0x80, // F
 }
 
-func InitCPU() *cpu {
-	c := cpu{
+func InitCpu() *Cpu {
+	c := Cpu{
 		drawFlag: true,
 		pc:       0x200, // chip-8 program counter starts at 0x200
 		beeper:   func() {},
@@ -57,7 +57,7 @@ func InitCPU() *cpu {
 	return &c
 }
 
-func (c *cpu) emulateCycle() {
+func (c *Cpu) emulateCycle() {
 	// in chip-8 addresses are stored in an array containing 1 byte in c.memory
 	// as an opcode is 2 bytes long, i will fetch 2 bytes from the array
 	c.opcode = uint16(c.memory[c.pc]<<8) | uint16(c.memory[c.pc+1])
@@ -69,7 +69,7 @@ func (c *cpu) emulateCycle() {
 	c.updateTimers()
 }
 
-func (c *cpu) updateTimers() {
+func (c *Cpu) updateTimers() {
 	if c.delayTimer > 0 {
 		c.delayTimer -= 1
 	}
@@ -81,21 +81,21 @@ func (c *cpu) updateTimers() {
 	}
 }
 
-func (c *cpu) Buffer() [32][64]uint8 {
+func (c *Cpu) Buffer() [32][64]uint8 {
 	return c.display
 }
 
-func (c *cpu) Draw() bool {
+func (c *Cpu) Draw() bool {
 	drawFlag := c.drawFlag
 	c.drawFlag = false
 	return drawFlag
 }
 
-func (c *cpu) AddBeep(fn func()) {
+func (c *Cpu) AddBeep(fn func()) {
 	c.beeper = fn
 }
 
-func (c *cpu) Key(num uint8, down bool) {
+func (c *Cpu) Key(num uint8, down bool) {
 	if down {
 		c.key[num] = 1
 	} else {
@@ -103,7 +103,7 @@ func (c *cpu) Key(num uint8, down bool) {
 	}
 }
 
-func (c *cpu) LoadProgram(filename string) error {
+func (c *Cpu) LoadProgram(filename string) error {
 	file, fileErr := os.OpenFile(filename, os.O_RDONLY, 0o777)
 	if fileErr != nil {
 		return fileErr
