@@ -61,13 +61,13 @@ func InitCpu() *Cpu {
 func (c *Cpu) EmulateCycle() {
 	// in chip-8 addresses are stored in an array containing 1 byte in c.memory
 	// as an opcode is 2 bytes long, i will fetch 2 bytes from the array
-	c.opcode = uint16(c.memory[c.pc]<<8) | uint16(c.memory[c.pc+1])
+	c.opcode = uint16(c.memory[c.pc])<<8 | uint16(c.memory[c.pc+1])
+	// log.Printf("PC: %X, OPCODE: 0x%X", c.pc, c.opcode)
 	// ignore the warning getting shown
 
 	// remember to increment the program counter by 2, not 1
 
 	c.executeOp()
-	log.Println("Opcode executing: ", c.opcode)
 	c.updateTimers()
 }
 
@@ -129,6 +129,9 @@ func (c *Cpu) LoadProgram(filename string) error {
 	for i := 0; i < len(buffer); i++ {
 		c.memory[i+512] = buffer[i]
 	}
+	log.Println("Buffer loaded into memory")
+
+	log.Printf("First 16 bytes of ROM: % x\n", c.memory[0x200:0x210])
 
 	return nil
 }

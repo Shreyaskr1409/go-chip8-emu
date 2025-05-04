@@ -7,7 +7,6 @@ import (
 
 // No need to call directly from main loop, this will be called from emulateCycle()
 func (c *Cpu) executeOp() {
-	// TODO
 	switch c.opcode & 0xF000 {
 	case 0x0000:
 		// only 0x0NNN, 0x00E0, 0x00EE
@@ -221,6 +220,7 @@ func (c *Cpu) executeOp() {
 			c.pc += 2
 		case 0x0033: // FX33, stores BCD value of V[x]
 			// MSB in I, then I+1, then LSP in I+2
+			log.Println("Executing: ", c.opcode)
 			c.memory[c.i] = c.v[c.opcode&0x0F00>>8] / 100
 			c.memory[c.i+1] = c.v[c.opcode&0x0F00>>8] % 10
 			c.memory[c.i+2] = c.v[c.opcode&0x0F00>>8] / 10

@@ -30,22 +30,22 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
+	// if g.cpu.Draw() {
 	screen.Fill(g.backgroundColor)
-	if g.cpu.Draw() {
-		buffer := g.cpu.Buffer()
+	buffer := g.cpu.Buffer()
 
-		for y := 0; y < int(DEFAULT_HEIGHT); y++ {
-			for x := 0; x < int(DEFAULT_WIDTH); x++ {
-				if buffer[y][x] != 0 {
-					for dy := 0; dy < g.scale; dy++ {
-						for dx := 0; dx < g.scale; dx++ {
-							screen.Set(x*g.scale+dx, y*g.scale+dy, g.foregroundColor)
-						}
+	for y := 0; y < int(DEFAULT_HEIGHT); y++ {
+		for x := 0; x < int(DEFAULT_WIDTH); x++ {
+			if buffer[y][x] != 0 {
+				for dy := 0; dy < g.scale; dy++ {
+					for dx := 0; dx < g.scale; dx++ {
+						screen.Set(x*g.scale+dx, y*g.scale+dy, g.foregroundColor)
 					}
 				}
 			}
 		}
 	}
+	// }
 }
 
 func (g *Game) Layout(outsideWidth int, outsideHeight int) (screenWidth, screenHeight int) {
