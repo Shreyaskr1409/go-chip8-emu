@@ -28,8 +28,8 @@ func NewGame(romPath string) (*Game, error) {
 
 	game := &Game{
 		cpu:             cpu,
-		backgroundColor: color.RGBA{0, 0, 0, 255},
-		foregroundColor: color.RGBA{255, 255, 255, 255},
+		backgroundColor: color.RGBA{0x40, 0x30, 0x02, 255},
+		foregroundColor: color.RGBA{0xED, 0xDB, 0xBF, 255},
 		scale:           DEFAULT_SCALE,
 	}
 
