@@ -2,6 +2,7 @@ package chip8
 
 import (
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -57,7 +58,7 @@ func InitCpu() *Cpu {
 	return &c
 }
 
-func (c *Cpu) emulateCycle() {
+func (c *Cpu) EmulateCycle() {
 	// in chip-8 addresses are stored in an array containing 1 byte in c.memory
 	// as an opcode is 2 bytes long, i will fetch 2 bytes from the array
 	c.opcode = uint16(c.memory[c.pc]<<8) | uint16(c.memory[c.pc+1])
@@ -66,6 +67,7 @@ func (c *Cpu) emulateCycle() {
 	// remember to increment the program counter by 2, not 1
 
 	c.executeOp()
+	log.Println("Opcode executing: ", c.opcode)
 	c.updateTimers()
 }
 
